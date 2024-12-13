@@ -183,3 +183,5 @@ cython_debug/
 *.toc
 *.fdb_latexmk
 *.fls
+/fonts/Lato.zip
+/fonts/Raleway.zip
