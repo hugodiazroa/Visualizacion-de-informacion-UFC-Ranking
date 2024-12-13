@@ -190,3 +190,5 @@ cython_debug/
 /.idea/runConfigurations/PY.xml
 /nkshv/ELO/ELO-scraper/src/.ufc_rankig_elo_argparse.py
 /data/decisive/.~lock.decisive.csv#
+/data/HD/.~lock.HD.csv#
+/top10HD.png
