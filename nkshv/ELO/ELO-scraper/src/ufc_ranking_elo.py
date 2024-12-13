@@ -471,24 +471,25 @@ def add_last_5_fights():
                 f.write(line)
         f.truncate()
 
-    
 def organize_files():
     file_name = str(date.today()) + "-elo.csv"
     file_name2 = str(date.today()) + "-peak_elo.csv"
-    if os.path.exists(file_name): #Deletes csv file after the code is finished
-        os.remove(file_name)
-        os.remove(file_name2)
-        current_path = os.getcwd()
-        web_path = current_path.replace("src", "")
-        web_path += "docs"
+    # Comment out or remove the following lines to avoid deleting the files
+    # if os.path.exists(file_name): #Deletes csv file after the code is finished
+    #     os.remove(file_name)
+    #     os.remove(file_name2)
+    current_path = os.getcwd()
+    web_path = current_path.replace("src", "")
+    web_path += "docs"
 
-        if not os.path.exists(web_path):
-            os.makedirs(web_path)
+    if not os.path.exists(web_path):
+        os.makedirs(web_path)
 
-        if os.path.exists(web_path + "index.html"):
-            os.remove(web_path + "index.html")
-        if os.path.exists(web_path + "peak_elo.html"):
-            os.remove(web_path + "peak_elo.html")
+    # Comment out or remove the following lines to avoid deleting the files
+    # if os.path.exists(web_path + "index.html"):
+    #     os.remove(web_path + "index.html")
+    # if os.path.exists(web_path + "peak_elo.html"):
+    #     os.remove(web_path + "peak_elo.html")
 
     files_to_move = ['index.html', 'peak_elo.html']
 
@@ -497,7 +498,6 @@ def organize_files():
         destination_file_path = os.path.join(web_path, file_name)
         shutil.move(source_file_path, destination_file_path)
     print("\nWeb Files moved to", web_path)
-
 
 update()
 export_to_csv()
