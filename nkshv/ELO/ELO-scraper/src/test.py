@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import csv
 import pandas as pd
 from datetime import date
-import statistics
 import os
 import shutil
 
@@ -162,7 +161,7 @@ number_of_wins = {}
 number_of_losses = {}
 number_of_draws = {}
 number_of_fights = {}
-strenght_of_schedule = {} 
+strength_of_schedule = {}
 peak_elo_year = {}
 unbeaten_streak = {}
 last_5_fights = {}
@@ -178,7 +177,7 @@ def generate_elo():
         unbeaten_streak.update({i:0})
         peak_elo.update({i:starting_rating})
         peak_elo_year.update({i: 'Never achieved'})
-        strenght_of_schedule.update({i:0})
+        strength_of_schedule.update({i:0})
         last_5_fights.update({i:[0,0,0,0,0]})
 
     aux = 0
@@ -192,8 +191,8 @@ def generate_elo():
         fighter_b = fights[aux+1]  ##winner
         status = fights[aux + 2]
         
-        strenght_of_schedule[fighter_a] += elo[fighter_b]
-        strenght_of_schedule[fighter_b] += elo[fighter_a]
+        strength_of_schedule[fighter_a] += elo[fighter_b]
+        strength_of_schedule[fighter_b] += elo[fighter_a]
 
         if status == 'win':
             transformed_rating_a = 10**((elo[fighter_a])/400)
@@ -243,13 +242,13 @@ def generate_elo():
         cont += 1
     global peak_elo_sorted
     global sorted_dictionary
-    global sorted_strenght_of_schedule
+    global sorted_strength_of_schedule
 
     for i in fighters:
             if number_of_fights[i] > 0:
-                strenght_of_schedule[i] = strenght_of_schedule[i] / number_of_fights[i]
+                strength_of_schedule[i] = strength_of_schedule[i] / number_of_fights[i]
 
-    sorted_strenght_of_schedule = {k: v for k, v in sorted(strenght_of_schedule.items(), key=lambda item: item[1])}
+    sorted_strength_of_schedule = {k: v for k, v in sorted(strength_of_schedule.items(), key=lambda item: item[1])}
     peak_elo_sorted = {k: v for k, v in sorted(peak_elo.items(), key=lambda item: item[1])}
     sorted_dictionary = {k: v for k, v in sorted(elo.items(), key=lambda item: item[1])}
     print("\nElo was successfully generated!")
@@ -363,17 +362,17 @@ def export_to_csv():
         writer.writerow(header2)
         writer.writerow(("place holder", 0, 0, 0, 0))
         for keys, values in res2.items():
-            writer.writerow((keys, f"{peak_elo_sorted[keys]:.3f}", peak_elo_year[keys], f"{number_of_wins[keys]}-{number_of_losses[keys]}-{number_of_draws[keys]}", f"{strenght_of_schedule[keys]:.3f}"))
+            writer.writerow((keys, f"{peak_elo_sorted[keys]:.3f}", peak_elo_year[keys], f"{number_of_wins[keys]}-{number_of_losses[keys]}-{number_of_draws[keys]}", f"{strength_of_schedule[keys]:.3f}"))
         f.close()
 
 def export_ufc_db():   ###TAKES 10 MINUTES TO RUN !!!
     header = ['Weight class', 'Method', 'time']
     file_name = str(date.today()) + "-db.csv"
     with open(file_name, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
+        writer2 = csv.writer(f)
+        writer2.writerow(header)
         for i in urls:
-            writer.writerow(generate_ufc_database(i))
+            writer2.writerow(generate_ufc_database(i))
 
         f.close()
 
