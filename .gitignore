@@ -168,3 +168,15 @@ cython_debug/
 /data/elo/masterdataframe.csv
 /data/elo/masterMLpublic.csv
 /data/complete/upcoming_events_small.csv
+
+
+#from anishathalye/gemini/ufc-visualizacion/.gitignore
+*.aux
+*.bbl
+*.blg
+*.nav
+*.out
+*.snm
+*.toc
+*.fdb_latexmk
+*.fls
