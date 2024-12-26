@@ -149,8 +149,8 @@ def generate_ufc_fighters():
 all_fighters = generate_ufc_fighters()
 
 
-starting_rating = 100
-k_factor = 32
+starting_rating = 1400
+k_factor = 15
 elo = {}
 peak_elo = {}
 number_of_wins = {}
@@ -371,7 +371,7 @@ def export_ufc_db():   ###TAKES 10 MINUTES TO RUN !!!
             writer.writerow(generate_ufc_database(i))
 
         f.close()
-
+'''
 def csv_to_html_main_page():
 
     file_name = str(date.today()) + "-elo.csv"
@@ -416,7 +416,8 @@ def csv_to_html_main_page():
             contents.write("""</body>
     </html>""")
             contents.close()
-
+'''
+'''
 def csv_to_html_lb():
     file_name = str(date.today()) + "-peak_elo.csv"
 
@@ -444,7 +445,7 @@ def csv_to_html_lb():
     </html>""")
 
             contents.close()
-
+'''
 def add_last_5_fights():
     with open("index.html", "r+") as f:
         lines = f.readlines()
@@ -471,8 +472,8 @@ def add_last_5_fights():
         f.truncate()
 
 def organize_files():
-    file_name = str(date.today()) + "-elo.csv"
-    file_name2 = str(date.today()) + "-peak_elo.csv"
+    file_name = "elo.csv"
+    file_name2 = "peak_elo.csv"
     # Comment out or remove the following lines to avoid deleting the files
     # if os.path.exists(file_name): #Deletes csv file after the code is finished
     #     os.remove(file_name)
@@ -498,10 +499,10 @@ def organize_files():
         shutil.move(source_file_path, destination_file_path)
     print("\nWeb Files moved to", web_path)
 
-update()
+#update()
 export_to_csv()
-csv_to_html_main_page()
-csv_to_html_lb()
+#csv_to_html_main_page()
+#csv_to_html_lb()
 add_last_5_fights()
 organize_files()
 
@@ -513,3 +514,53 @@ with open(csv_path, "a", newline="") as f: # new links has an upcoming event and
             event_items.append(new_years[i])
             event_items.append(new_links[i])
             writer.writerow(event_items)
+
+# Initialize an empty DataFrame to store historic Elo ratings
+historic_elo_df = pd.DataFrame(columns=["date", "fighter", "elo"])
+
+# Function to update the historic Elo ratings DataFrame
+def update_historic_elo(date, fighter, elo):
+    global historic_elo_df
+    new_row = {"date": date, "fighter": fighter, "elo": elo}
+    historic_elo_df = historic_elo_df.append(new_row, ignore_index=True)
+
+# Example function to generate Elo ratings (simplified for demonstration)
+def generate_elo(fights):
+    elo = {}
+    starting_rating = 1400
+    k_factor = 15
+
+    for fight in fights:
+        date, fighter_a, fighter_b, result = fight
+        if fighter_a not in elo:
+            elo[fighter_a] = starting_rating
+        if fighter_b not in elo:
+            elo[fighter_b] = starting_rating
+
+        expected_win_a = 1 / (1 + 10 ** ((elo[fighter_b] - elo[fighter_a]) / 400))
+        expected_win_b = 1 / (1 + 10 ** ((elo[fighter_a] - elo[fighter_b]) / 400))
+
+        if result == "win":
+            elo[fighter_a] += k_factor * (1 - expected_win_a)
+            elo[fighter_b] += k_factor * (0 - expected_win_b)
+        elif result == "loss":
+            elo[fighter_a] += k_factor * (0 - expected_win_a)
+            elo[fighter_b] += k_factor * (1 - expected_win_b)
+
+        # Update historic Elo ratings
+        update_historic_elo(date, fighter_a, elo[fighter_a])
+        update_historic_elo(date, fighter_b, elo[fighter_b])
+
+# Example list of fights (date, fighter_a, fighter_b, result)
+fights = [
+    ("2023-01-01", "Fighter A", "Fighter B", "win"),
+    ("2023-02-01", "Fighter A", "Fighter C", "loss"),
+    ("2023-03-01", "Fighter B", "Fighter C", "win"),
+]
+
+# Generate Elo ratings and update historic Elo ratings DataFrame
+generate_elo(fights)
+
+# Save the historic Elo ratings to a CSV file
+output_path = '/path/to/historic_elo.csv'
+historic_elo_df.to_csv(output_path, index=False)
